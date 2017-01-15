@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "328426994062",
+    "firebase_url": "https://mis-series-9f0e3.firebaseio.com",
+    "project_id": "mis-series-9f0e3",
+    "storage_bucket": "mis-series-9f0e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328426994062:android:f97abf6269a92082",
+        "android_client_info": {
+          "package_name": "rafaxplayer.misseries"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328426994062-vcov07qvkiaiiio1ts2a23dkrfotj1ed.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rafaxplayer.misseries",
+            "certificate_hash": "E706A8F8D2711D3AADB392A0AE34908375023AD8"
+          }
+        },
+        {
+          "client_id": "328426994062-2nptvku9rpd95qv3d28n9r5pl5t5a00s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsL22CQo4S8g3ztK2Vhe32PM2kzalxFQA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328426994062-2nptvku9rpd95qv3d28n9r5pl5t5a00s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
