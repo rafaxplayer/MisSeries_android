@@ -26,22 +26,21 @@
             android:scaleType="centerCrop"
             android:transitionName="imagge_transition" />
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:elevation="1dp"
             android:orientation="vertical"
             android:padding="5dp"
-            android:layout_marginLeft="@dimen/card_radius">
+            android:layout_marginLeft="@dimen/card_radius"
+            android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/textName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textColor="@color/color_tile_serie"
-                    android:textSize="@dimen/text_title" />
+                    android:inputType="textPersonName" />
 
                 <TextView
                     android:id="@+id/textTemps"
@@ -53,10 +52,17 @@
                     android:id="@+id/textNoVistos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="username" />
+                    android:text="0" />
 
         </LinearLayout>
-
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_more"
+            android:id="@+id/optionsButton"
+            android:layout_margin="@dimen/card_radius"
+            android:background="@null"
+            android:padding="@dimen/temp_item_padding" />
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

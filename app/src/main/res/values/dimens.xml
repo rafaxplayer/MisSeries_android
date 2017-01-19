@@ -7,4 +7,8 @@
     <dimen name="text_title">18sp</dimen>
     <dimen name="padding_cap_item">30dp</dimen>
     <dimen name="image_serie">100dp</dimen>
+    <dimen name="temp_item_padding">10dp</dimen>
+    <dimen name="size_fab">60dp</dimen>
+    <dimen name="fab_margin">15dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
 </resources>

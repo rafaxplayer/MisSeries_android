@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import rafaxplayer.misseries.models.Serie;
+
 /**
  * Created by rafax on 14/01/2017.
  */
@@ -22,6 +24,18 @@ public class GlobalUttilities {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(con);
 
         return settings;
+    }
+
+    public static void setImageSerie(Context con,Serie serie){
+        try {
+
+            updateDataSerieAsync setimg= new updateDataSerieAsync(con,serie);
+            setimg.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

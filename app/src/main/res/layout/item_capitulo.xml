@@ -21,9 +21,10 @@
             android:id="@+id/textCapName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="TextView"
-            android:textColor="@color/primaryText" />
+            android:textColor="@color/primaryText"
+            android:elevation="1dp"
+            android:layout_weight="9.95" />
 
         <Switch
             android:id="@+id/switchVisto"

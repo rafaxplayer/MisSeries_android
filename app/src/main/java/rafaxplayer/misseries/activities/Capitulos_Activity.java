@@ -22,10 +22,9 @@ import butterknife.ButterKnife;
 import rafaxplayer.misseries.R;
 import rafaxplayer.misseries.adapters.ListCapitulosAdapter;
 import rafaxplayer.misseries.models.Capitulo;
-import rafaxplayer.misseries.models.Serie;
+import rafaxplayer.misseries.models.ItemTemp;
 
 import static rafaxplayer.misseries.MisSeries.capitulosRef;
-import static rafaxplayer.misseries.MisSeries.seriesRef;
 
 public class Capitulos_Activity extends AppCompatActivity {
 
@@ -35,7 +34,9 @@ public class Capitulos_Activity extends AppCompatActivity {
     Switch sTodos;
     @BindView(R.id.imageSerie)
     ImageView imgSerie;
-
+    String code ;
+    String name ;
+    String poster;
     private ValueEventListener capsListener;
     private ListCapitulosAdapter adapterCapitulos;
 
@@ -55,12 +56,21 @@ public class Capitulos_Activity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int lastFirstVisiblePosition = ((LinearLayoutManager)listCapitulosView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-                List<Capitulo> listcaps= new ArrayList<Capitulo>();
-
+                List<Object> listcaps= new ArrayList<>();
+                String temp = "0";
                 for(DataSnapshot data:dataSnapshot.getChildren()) {
 
                     Capitulo cap = data.getValue(Capitulo.class);
+
+                    if(Integer.valueOf(cap.temp.trim()) != Integer.valueOf(temp.trim())){
+
+                        ItemTemp itemtemp = new ItemTemp(cap.temp);
+                        listcaps.add(itemtemp);
+                        temp = cap.temp;
+                    }
                     listcaps.add(cap);
+
+
                 }
                 adapterCapitulos = new ListCapitulosAdapter(Capitulos_Activity.this,listcaps,capitulosRef);
                 listCapitulosView.setAdapter(adapterCapitulos);
@@ -75,26 +85,17 @@ public class Capitulos_Activity extends AppCompatActivity {
             }
         };
 
-        String code = getIntent().getExtras().getString("code","0");
-        if(Integer.valueOf(code) > 0){
-            capitulosRef.orderByChild("seriecode").equalTo(code)
-                    .addValueEventListener(capsListener);
-
-            seriesRef.child(code).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChildren())
-                        Capitulos_Activity.this.setTitle(dataSnapshot.getValue(Serie.class).name);
-                        Picasso.with(getApplicationContext()).load(dataSnapshot.getValue(Serie.class).poster).into(imgSerie);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
+        Bundle bund =getIntent().getExtras();
+        if(bund != null){
+            code = bund.getString("code","0");
+            name = bund.getString("name","Capitulos ?");
+            poster = bund.getString("poster","");
+            setTitle(name);
+            Picasso.with(getApplicationContext()).load(poster).into(imgSerie);
+            capitulosRef.orderByChild("seriecode").equalTo(code).addValueEventListener(capsListener);
         }
+
+
         sTodos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,6 +109,7 @@ public class Capitulos_Activity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+
     }
 
     @Override
@@ -115,4 +117,5 @@ public class Capitulos_Activity extends AppCompatActivity {
         capitulosRef.removeEventListener(capsListener);
         super.onDestroy();
     }
+
 }

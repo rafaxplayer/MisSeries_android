@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.jaredrummler.android.device.DeviceName;
 
 import java.util.HashMap;
 
@@ -28,9 +29,10 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     private void sendRegistrationToServer(String token){
         database = FirebaseDatabase.getInstance();
+        String device= DeviceName.getDeviceName();
         HashMap<String,Object> map = new HashMap<>();
         map.put("token",token);
-
+        map.put("devicename",device);
         if(GlobalUttilities.getPrefs(getApplicationContext()).getString("install_id",not_set) == not_set){
             String key = database.getReference("/Clients").push().getKey();
             GlobalUttilities.editSharePrefs(getApplicationContext()).putString("install_id",key).commit();

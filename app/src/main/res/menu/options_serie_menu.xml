@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_viewserie"
+        android:icon="@drawable/ic_eye"
+        android:orderInCategory="100"
+        android:title="@string/action_view_serie"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settingsserie"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings_serie"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_deleteserie"
+        android:icon="@drawable/ic_delete"
+        android:orderInCategory="100"
+        android:title="@string/action_delete_serie"
+        app:showAsAction="never" />
+
+
+</menu>

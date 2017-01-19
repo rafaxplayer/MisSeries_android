@@ -17,7 +17,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rafaxplayer.misseries.MisSeries;
 import rafaxplayer.misseries.R;
 import rafaxplayer.misseries.adapters.ListCapitulosAdapter;
 import rafaxplayer.misseries.models.Capitulo;
@@ -43,9 +42,6 @@ public class NoVistos_Activity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-
-        capitulosRef = MisSeries.database.getReference("/Capitulos");
-
         listNoVistosView.setItemAnimator(new DefaultItemAnimator());
         listNoVistosView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -53,7 +49,7 @@ public class NoVistos_Activity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int lastFirstVisiblePosition = ((LinearLayoutManager)listNoVistosView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-                List<Capitulo> listcaps= new ArrayList<Capitulo>();
+                List<Object> listcaps= new ArrayList<>();
 
                 for(DataSnapshot data:dataSnapshot.getChildren()) {
 
