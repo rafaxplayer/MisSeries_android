@@ -4,12 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,111 +16,63 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import rafaxplayer.misseries.R;
-import rafaxplayer.misseries.adapters.ListSeriesAdapter;
 import rafaxplayer.misseries.classes.GlobalUttilities;
-import rafaxplayer.misseries.models.Capitulo;
-import rafaxplayer.misseries.models.Serie;
+import rafaxplayer.misseries.classes.updateDataSerieAsync;
+import rafaxplayer.misseries.fragments.Capitulos_Fragment;
+import rafaxplayer.misseries.fragments.Series_Fragment;
 
 import static rafaxplayer.misseries.MisSeries.capitulosRef;
-import static rafaxplayer.misseries.MisSeries.seriesRef;
+import static rafaxplayer.misseries.MisSeries.mAuth;
 
-public class MainActivity extends AppCompatActivity {
-    @BindView(R.id.listseries)
-    RecyclerView listSeriesView;
-    @BindView(R.id.fab)
-    FloatingActionButton fabNewSerie;
+public class MainActivity extends AppCompatActivity implements Series_Fragment.OnSerieSelectedListener{
+
     private String TAG = ".MainActivity";
-
-    private ListSeriesAdapter adapterSeries;
-    private ValueEventListener seriesListener;
-    private ValueEventListener capitulosNoVistosListener;
     private Menu _menu;
     private long countNovistos;
+    private ValueEventListener novistosListener;
+
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         countNovistos = 0;
-        listSeriesView.setItemAnimator(new DefaultItemAnimator());
-        listSeriesView.setLayoutManager(new LinearLayoutManager(this));
-
-        seriesListener = seriesRef.addValueEventListener(new ValueEventListener() {
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                List<Serie> listSeries = new ArrayList<Serie>();
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-
-                    final Serie serie = data.getValue(Serie.class);
-                    // set capitulos no visto en la serie
-                    capitulosNoVistosListener = capitulosRef.orderByChild("seriecode").equalTo(serie.code)
-                            .addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    int count = 0;
-                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                        if (!data.getValue(Capitulo.class).visto) {
-                                            count++;
-                                        }
-                                    }
-
-                                    serie.novistos = count;
-                                    adapterSeries.notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                    listSeries.add(serie);
-
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Intent intent = new Intent(MainActivity.this,Login_Activity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
-                adapterSeries = new ListSeriesAdapter(MainActivity.this, listSeries);
-                listSeriesView.setAdapter(adapterSeries);
 
             }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        fabNewSerie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialogNewRecipe();
-
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        capitulosRef.orderByChild("visto").equalTo(false).addListenerForSingleValueEvent(new ValueEventListener() {
+        };
+        novistosListener=capitulosRef.orderByChild("visto").equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 countNovistos = dataSnapshot.getChildrenCount();
-                if(_menu !=null)
+                if(_menu != null)
                     _menu.findItem(R.id.news).setTitle("NO VISTOS " + countNovistos);
 
             }
@@ -134,6 +82,18 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -152,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.news:
-                if(countNovistos>0) {
+                if(countNovistos > 0) {
                     startActivity(new Intent(this, NoVistos_Activity.class));
                 }else{
                     Toast.makeText(this, "Has visualizado todos los capitulos", Toast.LENGTH_SHORT).show();
@@ -164,14 +124,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
 
     @Override
     protected void onDestroy() {
-        seriesRef.removeEventListener(seriesListener);
+        if(novistosListener!=null){
+            capitulosRef.removeEventListener(novistosListener);
+        }
         super.onDestroy();
     }
 
-    private void showDialogNewRecipe(){
+    public void showDialogNewRecipe(){
         AlertDialog.Builder dialog= new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_new_recipe, null);
@@ -197,19 +166,27 @@ public class MainActivity extends AppCompatActivity {
         }).create().show();
     }
 
-    private void newSerie(final String code){
+    private void newSerie(String code){
+        try {
+            updateDataSerieAsync setData = new updateDataSerieAsync(MainActivity.this, code);
+            setData.execute();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
-        final Serie serie = new Serie(code,"","","");
-        seriesRef.child(code).setValue(serie).addOnCompleteListener(this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    GlobalUttilities.setImageSerie(MainActivity.this,serie);
-                }
+    }
 
-            }
+    @Override
+    public void onSerieSelected(Bundle bund) {
 
-        });
+        if(GlobalUttilities.isDualPanel(MainActivity.this)){
+            Capitulos_Fragment frm =(Capitulos_Fragment) getSupportFragmentManager().findFragmentById(R.id.fragmentCapitulos);
+            frm.loadCapitulos(bund);
 
+        }else{
+            Intent intent = new Intent(this, Capitulos_Activity.class);
+            intent.replaceExtras(bund);
+            startActivity(intent);
+        }
     }
 }

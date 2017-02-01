@@ -25,18 +25,21 @@
         </activity>
         <activity
             android:name=".activities.NoVistos_Activity"
+            android:label="@string/activity_notseen"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.Settings_Activity"
-            android:parentActivityName=".activities.MainActivity"
-            android:label="@string/activity_settings">
+        <activity
+            android:name=".activities.Settings_Activity"
+            android:label="@string/activity_settings"
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
+
         <service android:name=".classes.FirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -48,6 +51,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".activities.Login_Activity"></activity>
     </application>
 
 </manifest>

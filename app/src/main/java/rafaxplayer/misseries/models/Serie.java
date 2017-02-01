@@ -11,19 +11,20 @@ public class Serie {
     public String name;
     public String poster;
     public String temps;
-    public long novistos;
+    public int novistos;
 
     public Serie() {
     }
 
-    public Serie(String code,String name, String poster,String temps) {
+    public Serie(String code,String name,int novistos, String poster,String temps) {
         this.code = code;
         this.name = name;
         this.poster = poster;
         this.temps = temps;
+        this.novistos=novistos;
 
     }
-    public void setnovistos(long novistos){
+    public void setnovistos(int novistos){
         this.novistos = novistos;
     }
 

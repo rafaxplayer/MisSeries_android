@@ -3,7 +3,7 @@ package rafaxplayer.misseries.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,12 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -28,12 +24,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rafaxplayer.misseries.R;
-import rafaxplayer.misseries.activities.Capitulos_Activity;
 import rafaxplayer.misseries.activities.Settings_Activity;
 import rafaxplayer.misseries.classes.IconizedMenu;
+import rafaxplayer.misseries.fragments.Series_Fragment;
 import rafaxplayer.misseries.models.Serie;
 
-import static rafaxplayer.misseries.MisSeries.capitulosRef;
 import static rafaxplayer.misseries.MisSeries.seriesRef;
 
 /**
@@ -44,10 +39,12 @@ public class ListSeriesAdapter extends RecyclerView.Adapter<ListSeriesAdapter.Vi
 
     private Context con;
     private List<Serie> mDataSeries;
+    private Series_Fragment.OnSerieSelectedListener callback;
 
-    public ListSeriesAdapter(Context con, List<Serie> series) {
+    public ListSeriesAdapter(Context con, List<Serie> series,Series_Fragment.OnSerieSelectedListener callback) {
         this.con = con;
         this.mDataSeries = series;
+        this.callback=callback;
     }
 
 
@@ -97,11 +94,12 @@ public class ListSeriesAdapter extends RecyclerView.Adapter<ListSeriesAdapter.Vi
                                 con.startActivity(intent);
                                 break;
                             case R.id.action_viewserie:
-                                Intent intencion = new Intent(con, Capitulos_Activity.class);
-                                intencion.putExtra("name",mDataSeries.get(position).name);
-                                intencion.putExtra("code",mDataSeries.get(position).code);
-                                intencion.putExtra("poster",mDataSeries.get(position).poster);
-                                con.startActivity(intencion);
+                                Bundle bun= new Bundle();
+                                bun.putString("code",mDataSeries.get(position).code);
+                                bun.putString("name",mDataSeries.get(position).name);
+                                bun.putString("poster",mDataSeries.get(position).poster);
+                                callback.onSerieSelected(bun);
+
                               break;
                         }
                         return true;
@@ -139,11 +137,16 @@ public class ListSeriesAdapter extends RecyclerView.Adapter<ListSeriesAdapter.Vi
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(con, Capitulos_Activity.class);
+           Bundle bun= new Bundle();
+            bun.putString("code",mDataSeries.get(ViewHolder.this.getLayoutPosition()).code);
+            bun.putString("name",mDataSeries.get(ViewHolder.this.getLayoutPosition()).name);
+            bun.putString("poster",mDataSeries.get(ViewHolder.this.getLayoutPosition()).poster);
+            callback.onSerieSelected(bun);
+            /*Intent intent = new Intent(con, Capitulos_Activity.class);
             intent.putExtra("code",mDataSeries.get(ViewHolder.this.getLayoutPosition()).code);
             intent.putExtra("name",mDataSeries.get(ViewHolder.this.getLayoutPosition()).name);
             intent.putExtra("poster",mDataSeries.get(ViewHolder.this.getLayoutPosition()).poster);
-            con.startActivity(intent);
+            con.startActivity(intent);*/
         }
     }
     public void deleteSerie(final String code,String name){
@@ -153,27 +156,12 @@ public class ListSeriesAdapter extends RecyclerView.Adapter<ListSeriesAdapter.Vi
                 .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        seriesRef.child(code).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    capitulosRef.orderByChild("seriecode").equalTo(code).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            for(DataSnapshot data:dataSnapshot.getChildren()){
-                                                data.getRef().removeValue();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                }
-                            }
-                        });
+                        try {
+                            seriesRef.child(code).removeValue();
+                            Toast.makeText(con, "Ok Serie eliminada con exito", Toast.LENGTH_SHORT).show();
+                        }catch (Exception ex){
+                            ex.printStackTrace();
+                        }
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

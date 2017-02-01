@@ -81,4 +81,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="action_settings_serie">Configuracion</string>
     <string name="activity_settings">Configuración</string>
+    <string name="activity_notseen">No Visualizados</string>
 </resources>

@@ -26,6 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rafaxplayer.misseries.R;
+import rafaxplayer.misseries.classes.GlobalUttilities;
 import rafaxplayer.misseries.classes.IconizedMenu;
 import rafaxplayer.misseries.models.Capitulo;
 import rafaxplayer.misseries.models.ItemTemp;
@@ -171,7 +172,7 @@ public class ListCapitulosAdapter extends RecyclerView.Adapter{
                     switch (item.getItemId()){
                         case R.id.action_viewserie:
                             try {
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(((Capitulo) listCaps.get(ViewHolder.this.getLayoutPosition())).url));
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GlobalUttilities.BASE_URL+((Capitulo) listCaps.get(ViewHolder.this.getLayoutPosition())).url));
                                 con.startActivity(browserIntent);
                             }catch (Exception e){
                                 Log.e("View Url Intent",e.getMessage());
@@ -183,7 +184,7 @@ public class ListCapitulosAdapter extends RecyclerView.Adapter{
                                 Intent i = new Intent(Intent.ACTION_SEND);
                                 i.setType("text/plain");
                                 i.putExtra(Intent.EXTRA_SUBJECT, "Mis Series");
-                                String sAux = "http://seriesdanko.com/"+ ((Capitulo) listCaps.get(ViewHolder.this.getLayoutPosition())).url;
+                                String sAux = GlobalUttilities.BASE_URL + ((Capitulo) listCaps.get(ViewHolder.this.getLayoutPosition())).url;
                                 i.putExtra(Intent.EXTRA_TEXT,sAux);
                                 con.startActivity(Intent.createChooser(i,"Compartir con:"));
 

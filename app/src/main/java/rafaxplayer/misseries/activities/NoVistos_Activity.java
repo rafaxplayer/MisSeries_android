@@ -1,10 +1,12 @@
 package rafaxplayer.misseries.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 
@@ -81,8 +83,30 @@ public class NoVistos_Activity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId()== android.R.id.home){
+            Intent intent=new Intent(this,MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onDestroy() {
         capitulosRef.removeEventListener(capsListener);
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO Auto-generated method stub
+        super.onBackPressed();
+        Intent intent=new Intent(this,MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
