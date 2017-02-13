@@ -11,24 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:id="@+id/userInfo"
-            android:padding="@dimen/temp_item_padding"
-            android:layout_margin="@dimen/temp_item_padding"
-            android:clickable="true">
-
-            <TextView
-                android:text="TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textUserEmail"
-                android:layout_weight="1"
-                android:gravity="center" />
-        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"

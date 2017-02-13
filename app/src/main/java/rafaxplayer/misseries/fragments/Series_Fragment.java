@@ -11,14 +11,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -36,7 +31,6 @@ import rafaxplayer.misseries.models.Capitulo;
 import rafaxplayer.misseries.models.Serie;
 
 import static rafaxplayer.misseries.MisSeries.capitulosRef;
-import static rafaxplayer.misseries.MisSeries.mAuth;
 import static rafaxplayer.misseries.MisSeries.seriesRef;
 
 /**
@@ -48,20 +42,15 @@ public class Series_Fragment extends Fragment {
     RecyclerView listSeriesView;
     @BindView(R.id.fab)
     FloatingActionButton fabNewSerie;
-    @BindView(R.id.textUserEmail)
-    TextView emailtext;
-    @BindView(R.id.userInfo)
-    LinearLayout userContainer;
-    private String TAG = ".MainActivity";
 
+    private String TAG = ".MainActivity";
     private ListSeriesAdapter adapterSeries;
     private ValueEventListener seriesListener;
     private ValueEventListener capitulosNoVistosListener;
-    private Menu _menu;
-    private long countNovistos;
     private Unbinder unbinder;
     private Context context;
     private OnSerieSelectedListener callback;
+
 
     public interface OnSerieSelectedListener{
         void onSerieSelected(Bundle bund);
@@ -87,15 +76,10 @@ public class Series_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_series, container, false);
         unbinder = ButterKnife.bind(this,v);
-        FirebaseUser user = mAuth.getCurrentUser();
+
         listSeriesView.setItemAnimator(new DefaultItemAnimator());
         listSeriesView.setLayoutManager(new LinearLayoutManager(context));
-        if(user!=null){
-            userContainer.setVisibility(View.VISIBLE);
-            emailtext.setText(user.getEmail());
-        }else{
-            userContainer.setVisibility(View.GONE);
-        }
+
         seriesListener = seriesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -141,18 +125,12 @@ public class Series_Fragment extends Fragment {
         fabNewSerie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).showDialogNewRecipe();
+                ((MainActivity)getActivity()).showDialogNewSerie();
 
 
             }
         });
-        userContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Un Login...", Toast.LENGTH_SHORT).show();
-                mAuth.signOut();
-            }
-        });
+
 
         return v;
     }
@@ -174,6 +152,7 @@ public class Series_Fragment extends Fragment {
             capitulosRef.removeEventListener(capitulosNoVistosListener);
         }
     }
+
 
 
 

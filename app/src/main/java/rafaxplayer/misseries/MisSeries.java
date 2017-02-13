@@ -18,15 +18,19 @@ public class MisSeries extends Application {
     public static DatabaseReference capitulosRef;
     public static DatabaseReference seriesRef;
     public static DatabaseReference clientsRef;
+    public static DatabaseReference notificationsRef;
     public static FirebaseAuth mAuth;
+
     @Override
     public void onCreate() {
+
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
         capitulosRef = database.getReference("/Capitulos");
         seriesRef = database.getReference("/Series");
         clientsRef = database.getReference("/Clients");
+        notificationsRef=database.getReference("/Notifications");
         FirebaseInstanceId.getInstance().getToken();
         BadgeUtils.clearBadge(this);
     }

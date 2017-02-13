@@ -11,4 +11,6 @@
     <dimen name="size_fab">60dp</dimen>
     <dimen name="fab_margin">15dp</dimen>
     <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="padding_buttons_orizontal">10dp</dimen>
+    <dimen name="padding_buttons_vertical">10dp</dimen>
 </resources>

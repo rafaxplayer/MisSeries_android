@@ -9,18 +9,28 @@ import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONObject;
 
 import rafaxplayer.misseries.R;
 import rafaxplayer.misseries.activities.NoVistos_Activity;
+import rafaxplayer.misseries.models.Notification;
+
+import static rafaxplayer.misseries.MisSeries.mAuth;
+import static rafaxplayer.misseries.MisSeries.notificationsRef;
+import static rafaxplayer.misseries.classes.GlobalUttilities.getPrefs;
+import static rafaxplayer.misseries.classes.GlobalUttilities.not_set;
 
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
     String TAG = "GCM";
     private static int numMessages = 0;
-    NotificationCompat.InboxStyle inboxStyle =  new NotificationCompat.InboxStyle();
+    NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+
     public FirebaseMessagingService() {
     }
 
@@ -40,10 +50,34 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             try {
 
                 JSONObject jsonObj = new JSONObject(remoteMessage.getData());
-                Log.e(TAG, "Message capitulo name: " + jsonObj.getString("name"));
-                if(GlobalUttilities.getPrefs(getApplicationContext()).getBoolean(jsonObj.getString("seriecode"),true)){
-                    notiifcation("Mis Series","Tienes nuevos capitulos",jsonObj.getString("name"));
 
+                if(mAuth.getCurrentUser()!= null) {
+
+                    if (getPrefs(getApplicationContext()).getBoolean(jsonObj.getString("seriecode"), true)) {
+
+                        final String user_id = GlobalUttilities.getPrefs(getApplicationContext()).getString("install_id",not_set);
+                        final Notification noti = new Notification(jsonObj.getString("name"),jsonObj.getString("seriecode"),jsonObj.getString("temp"),jsonObj.getString("url"));
+                        final String key = notificationsRef.child(user_id).push().getKey();
+                        noti.setKey(key);
+                        //check if notification chapter already exists
+                        notificationsRef.child(user_id).orderByChild("name").equalTo(noti.name).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(!dataSnapshot.exists()){
+                                    notificationsRef.child(user_id).child(key).setValue(noti);
+                                    notiifcation("Mis Series", "Tienes nuevos capitulos", noti.name);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+                    }
                 }
 
             } catch (Exception ex) {
@@ -54,10 +88,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
 
-            Log.e(TAG,remoteMessage.getNotification().toString());
+            Log.e(TAG, remoteMessage.getNotification().toString());
         }
     }
-    private void notiifcation(String title,String body,String name){
+
+    private void notiifcation(String title, String body, String name) {
 
         Intent resultIntent = new Intent(this, NoVistos_Activity.class);
 
@@ -78,13 +113,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .setSound(RingtoneManager
                                 .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true);
-        numMessages = numMessages+1;
+        numMessages = numMessages + 1;
         mBuilder.setContentText("Tienes " + numMessages + " nuevos capitulos");
         mBuilder.setNumber(numMessages);
         mBuilder.setContentIntent(resultPendingIntent);
-Log.e("count",numMessages+"");
+        Log.e("count", numMessages + "");
         inboxStyle.setBigContentTitle("Mis Series Nuevos capitulos :");
-        if(numMessages < 6) {
+        if (numMessages < 6) {
 
             inboxStyle.addLine(name);
         }
@@ -95,7 +130,7 @@ Log.e("count",numMessages+"");
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(1, mBuilder.build());
-        BadgeUtils.setBadge(this,numMessages);
+        BadgeUtils.setBadge(this, numMessages);
     }
 
 

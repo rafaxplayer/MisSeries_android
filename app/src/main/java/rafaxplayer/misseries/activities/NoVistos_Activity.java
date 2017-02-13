@@ -2,51 +2,42 @@ package rafaxplayer.misseries.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rafaxplayer.misseries.R;
 import rafaxplayer.misseries.adapters.ListCapitulosAdapter;
+import rafaxplayer.misseries.classes.BaseActivity;
 import rafaxplayer.misseries.models.Capitulo;
-
 import static rafaxplayer.misseries.MisSeries.capitulosRef;
 
-public class NoVistos_Activity extends AppCompatActivity {
+public class NoVistos_Activity extends BaseActivity {
 
-
-    ValueEventListener capsListener;
     @BindView(R.id.listNoVistos)
     RecyclerView listNoVistosView;
     @BindView(R.id.switchtodos)
     Switch sTodos;
-    ListCapitulosAdapter adapterCapitulos;
+    private ValueEventListener capsListener;
+    private ListCapitulosAdapter adapterCapitulos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_no_vistos);
-
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
 
         listNoVistosView.setItemAnimator(new DefaultItemAnimator());
         listNoVistosView.setLayoutManager(new LinearLayoutManager(this));
-
         capsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -81,7 +72,11 @@ public class NoVistos_Activity extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected int getLayoutResourceId() {
 
+        return R.layout.activity_no_vistos;
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

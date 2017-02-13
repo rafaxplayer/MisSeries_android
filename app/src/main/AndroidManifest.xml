@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="rafaxplayer.misseries">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MisSeries"
         android:allowBackup="true"
@@ -9,6 +11,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +57,16 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.Login_Activity"></activity>
+        <activity android:name=".activities.Login_Activity" />
+        <activity
+            android:name=".activities.Notifications_Activity"
+            android:label="@string/activity_notifications"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+
+        </activity>
     </application>
 
 </manifest>

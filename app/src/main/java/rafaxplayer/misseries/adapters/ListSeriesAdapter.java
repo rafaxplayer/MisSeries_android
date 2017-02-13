@@ -142,11 +142,7 @@ public class ListSeriesAdapter extends RecyclerView.Adapter<ListSeriesAdapter.Vi
             bun.putString("name",mDataSeries.get(ViewHolder.this.getLayoutPosition()).name);
             bun.putString("poster",mDataSeries.get(ViewHolder.this.getLayoutPosition()).poster);
             callback.onSerieSelected(bun);
-            /*Intent intent = new Intent(con, Capitulos_Activity.class);
-            intent.putExtra("code",mDataSeries.get(ViewHolder.this.getLayoutPosition()).code);
-            intent.putExtra("name",mDataSeries.get(ViewHolder.this.getLayoutPosition()).name);
-            intent.putExtra("poster",mDataSeries.get(ViewHolder.this.getLayoutPosition()).poster);
-            con.startActivity(intent);*/
+
         }
     }
     public void deleteSerie(final String code,String name){

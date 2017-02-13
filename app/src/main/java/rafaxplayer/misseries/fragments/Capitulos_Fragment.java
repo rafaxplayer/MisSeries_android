@@ -7,6 +7,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class Capitulos_Fragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v=inflater.inflate(R.layout.fragment_capitulos, container, false);
+        View v = inflater.inflate(R.layout.fragment_capitulos, container, false);
         unbinder = ButterKnife.bind(this,v);
         listCapitulosView.setItemAnimator(new DefaultItemAnimator());
         listCapitulosView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -115,9 +116,11 @@ public class Capitulos_Fragment extends Fragment {
             name = args.getString("name","Capitulos ?");
             poster = args.getString("poster","");
             setTitle(name);
+            Log.e("poster:",poster);
             if(TextUtils.isEmpty(poster)){
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(imgSerie);
             }else{
+
                 Picasso.with(getActivity()).load(poster).error(R.mipmap.ic_launcher).placeholder(R.mipmap.ic_launcher).into(imgSerie);
             }
 
