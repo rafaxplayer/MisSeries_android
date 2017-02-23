@@ -298,8 +298,8 @@ public class MainActivity extends BaseActivity implements Series_Fragment.OnSeri
             if (user.getPhotoUrl() != null) {
                 Picasso.with(this).load(user.getPhotoUrl())
                         .resize(60, 60).centerCrop()
-                        .error(R.mipmap.ic_launcher)
-                        .placeholder(R.mipmap.ic_launcher)
+                        .error(R.drawable.user_placeholder)
+                        .placeholder(R.drawable.user_placeholder)
                         .into(imageUser);
             }
         }

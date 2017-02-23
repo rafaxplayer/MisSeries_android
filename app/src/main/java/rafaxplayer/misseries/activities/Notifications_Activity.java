@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,6 +61,8 @@ public class Notifications_Activity extends BaseActivity {
                     Notification noti = data.getValue(Notification.class);
                     listNoti.add(noti);
                 }
+                //reorder list desc
+                Collections.reverse(listNoti);
                 adapterNotifications = new ListNotificationsAdapter(Notifications_Activity.this, listNoti);
                 listNotifications.setAdapter(adapterNotifications);
 
@@ -72,7 +76,7 @@ public class Notifications_Activity extends BaseActivity {
             }
         };
 
-        notificationsRef.child(user_id).orderByChild("date")
+        notificationsRef.child(user_id).orderByChild("date").limitToLast(20)
                 .addValueEventListener(notifyListener);
 
     }

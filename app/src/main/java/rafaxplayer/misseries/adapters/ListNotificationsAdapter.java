@@ -4,17 +4,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rafaxplayer.misseries.MisSeries;
 import rafaxplayer.misseries.R;
 import rafaxplayer.misseries.classes.GlobalUttilities;
 import rafaxplayer.misseries.models.Notification;
@@ -27,13 +35,13 @@ import static rafaxplayer.misseries.MisSeries.notificationsRef;
 
 public class ListNotificationsAdapter extends RecyclerView.Adapter<ListNotificationsAdapter.ViewHolder>{
     private Context con;
-    private List<Notification> mDataSeries;
+    private List<Notification> mDataNotifications;
     private String user_id;
 
 
     public ListNotificationsAdapter(Context con, List<Notification> notifications) {
         this.con = con;
-        this.mDataSeries = notifications;
+        this.mDataNotifications = notifications;
         this.user_id = GlobalUttilities.getIntallID(con);
 
     }
@@ -51,13 +59,13 @@ public class ListNotificationsAdapter extends RecyclerView.Adapter<ListNotificat
 
     @Override
     public void onBindViewHolder(ListNotificationsAdapter.ViewHolder holder, final int position) {
-        holder.name.setText(mDataSeries.get(position).name);
-        holder.temp.setText("Temp : "+ mDataSeries.get(position).temp);
-        holder.date.setText(mDataSeries.get(position).date);
+        holder.name.setText(mDataNotifications.get(position).name);
+        holder.temp.setText("Temp : "+ mDataNotifications.get(position).temp);
+        holder.date.setText(mDataNotifications.get(position).getFormatedDate());
         holder.clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteNotify(mDataSeries.get(position).key);
+                deleteNotify(mDataNotifications.get(position).key);
 
             }
         });
@@ -67,7 +75,7 @@ public class ListNotificationsAdapter extends RecyclerView.Adapter<ListNotificat
     @Override
     public int getItemCount() {
 
-        return mDataSeries.size();
+        return mDataNotifications.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener{
@@ -90,7 +98,40 @@ public class ListNotificationsAdapter extends RecyclerView.Adapter<ListNotificat
 
         @Override
         public void onClick(View v) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(con);
 
+            LayoutInflater inflater = LayoutInflater.from(con);
+            View dialogView = inflater.inflate(R.layout.dialog_notification, null);
+            dialogBuilder.setView(dialogView);
+            final ImageView img = (ImageView)dialogView.findViewById(R.id.imageSerieNotify);
+            MisSeries.seriesRef.orderByChild("code")
+                    .equalTo(mDataNotifications.get(ViewHolder.this.getLayoutPosition()).seriecode)
+                    .limitToLast(1)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if(dataSnapshot.exists()){
+                        for(DataSnapshot data:dataSnapshot.getChildren()){
+                            String poster = data.child("poster").getValue(String.class);
+                            if(!TextUtils.isEmpty(poster))
+                                Picasso.with(con).load(poster).error(R.mipmap.ic_launcher).placeholder(R.mipmap.ic_launcher).into(img);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            ((TextView) dialogView.findViewById(R.id.textTitleNotifiy)).setText(mDataNotifications.get(ViewHolder.this.getLayoutPosition()).name);
+            ((TextView) dialogView.findViewById(R.id.textTempNotify)).setText("Temp : "+mDataNotifications.get(ViewHolder.this.getLayoutPosition()).temp);
+            ((TextView) dialogView.findViewById(R.id.textDateNotify)).setText(mDataNotifications.get(ViewHolder.this.getLayoutPosition()).getFormatedDate());
+
+            AlertDialog alertDialog = dialogBuilder.create();
+            alertDialog.show();
         }
     }
     private void deleteNotify(final String code){

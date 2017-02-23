@@ -1,9 +1,8 @@
 package rafaxplayer.misseries.models;
 
-import android.text.format.DateFormat;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -15,11 +14,11 @@ public class Notification {
     public String seriecode;
     public String temp;
     public String url;
-    public String date;
+    public long date;
     public String key;
 
     public Notification(){
-        date = DateFormat.format("dd-MM-yyyy hh:mm:ss", new Date()).toString();
+        date = getTimeStamp();
     }
 
     public Notification(String name, String seriecode, String temp, String url) {
@@ -27,9 +26,33 @@ public class Notification {
         this.seriecode = seriecode;
         this.temp = temp;
         this.url=url;
-        date = DateFormat.format("dd-MM-yyyy hh:mm:ss", new Date()).toString();
+        this.date = getTimeStamp();
+
+
     }
     public void setKey(String key){
         this.key=key;
+    }
+
+    private long getTimeStamp() {
+        Long tsLong = System.currentTimeMillis() / 1000;
+
+        return tsLong;
+
+    }
+
+    public String getFormatedDate(){
+
+        try{
+
+            Date netDate = (new Date(this.date*1000));
+            String format="dd-MM-yyyy hh:mm:ss";
+            java.text.DateFormat sdf = new SimpleDateFormat(format);
+
+            return sdf.format(netDate);
+        }
+        catch(Exception ex){
+            return "xx";
+        }
     }
 }

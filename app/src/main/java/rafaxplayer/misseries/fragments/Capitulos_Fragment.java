@@ -80,7 +80,6 @@ public class Capitulos_Fragment extends Fragment {
                     }
                     listcaps.add(cap);
 
-
                 }
                 adapterCapitulos = new ListCapitulosAdapter(getActivity(),listcaps,capitulosRef);
                 listCapitulosView.setAdapter(adapterCapitulos);
