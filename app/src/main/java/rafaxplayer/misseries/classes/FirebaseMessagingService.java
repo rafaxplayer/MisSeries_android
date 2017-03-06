@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import rafaxplayer.misseries.R;
 import rafaxplayer.misseries.activities.NoVistos_Activity;
+import rafaxplayer.misseries.activities.Notifications_Activity;
 import rafaxplayer.misseries.models.Notification;
 
 import static rafaxplayer.misseries.MisSeries.mAuth;
@@ -75,8 +76,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                             }
                         });
 
-
-
                     }
                 }
 
@@ -94,7 +93,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     private void notiifcation(String title, String body, String name) {
 
-        Intent resultIntent = new Intent(this, NoVistos_Activity.class);
+        Intent resultIntent = new Intent(this, Notifications_Activity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack
